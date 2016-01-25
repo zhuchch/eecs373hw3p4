@@ -1,32 +1,50 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+#include <assert.h>
+#include <stdlib.h>
 
-# Precompiled Headers
-*.gch
-*.pch
+#include "list.h"
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+// Takes a valid, sorted list starting at `head` and adds the element
+// `new_element` to the list. The list is sorted based on the value of the
+// `index` member in ascending order. Returns a pointer to the head of the list
+// after the insertion of the new element.
+list_t* insert_sorted(list_t* head, list_t* new_element) {
+	assert(head != NULL);
+	assert(new_element != NULL);
+	if((*head).index>(*new_element).index){
+		(*new_element).next=head;
+		head=new_element;
+		return head;	
+	}
+	struct list_t *ini=head;
+	while((*ini).next!=NULL){
+		if((*ini).index<=(*new_element).index&&((*(*ini).next).index>=(*new_element).index)){
+			(*new_element).next=(*ini).next;
+			(*ini).next=new_element;
+			return head;
+		}
+		ini=(*ini).next;
+	}
+		(*ini).next=new_element;
+		return head;
+}
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+// Reverses the order of the list starting at `head` and returns a pointer to
+// the resulting list. You do not need to preserve the original list.
+list_t* reverse(list_t* head) {
+	assert(head != NULL);
+	struct list_t *bridgeback=head;
+	struct list_t *bridgefor=(*head).next;
+	(*head).next=NULL;
+	struct list_t *ini=bridgefor;
+	
+	while((*ini).next!=NULL){	
+		bridgefor=(*ini).next;
+		(*ini).next=bridgeback;
+		bridgeback=ini;
+		ini=bridgefor;	
+	}
+	(*ini).next=bridgeback;
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
 
-# Debug files
-*.dSYM/
+	return ini;
+}
